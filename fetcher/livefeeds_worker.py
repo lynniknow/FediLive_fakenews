@@ -60,7 +60,7 @@ def fetch_livefeeds(instance_name, instance_info, global_duration, token, db_man
     current_round = instance_info["round"]
     id_range = instance_info.get(f"round{current_round - 1}_id_range", {})
     logger.info(f"Starting to fetch toots from {instance_name}")
-    livefeeds_url = f"https://{instance_name}/api/v1/timelines/public"
+    livefeeds_url = f"https://{instance_name}/api/v1/timelines/tag/Election2024"
     headers = {"Authorization": f"Bearer {token}", 'Email': config.api.get('email', '')}
     retry_time = 0
     last_page_flag = -1
@@ -68,7 +68,7 @@ def fetch_livefeeds(instance_name, instance_info, global_duration, token, db_man
 
     while True:
         r_in_nowround += 1
-        params = {"local": True, "limit": 40}
+        params = {"local": True, "limit": 40, 'any[]': ['musk', 'trump', 'Harris', 'lgbtq', 'news', 'USnews', 'USpolitics', 'project2025']}
         if last_page_flag != -1:
             params["max_id"] = last_page_flag
         elif current_round != 0:

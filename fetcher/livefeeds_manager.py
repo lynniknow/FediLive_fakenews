@@ -72,3 +72,27 @@ class LivefeedsManager:
             logger.info(f"Successfully saved reblogs and favourites for {sid}.")
         except Exception as e:
             logger.error(f"Error saving reblogs/favourites for {sid}: {e}")   
+    
+    def save_followings(self, instance, user_id, followings):
+        pid = f"{instance}#{user_id}"
+        try:
+            with self.connection:
+                self.connection.execute("""
+                    INSERT INTO followings (pid, following)
+                    VALUES (?, ?)
+                """, (pid, json.dumps(followings)))
+            logger.info(f"Successfully followings for {pid}.")
+        except Exception as e:
+            logger.error(f"Error saving followings for {pid}: {e}") 
+    
+    def save_luser(self, instance, user_id):
+        pid = f"{instance}#{user_id}"
+        try:
+            with self.connection:
+                self.connection.execute("""
+                    INSERT INTO lusers (pid, instance_name, id)
+                    VALUES (?, ?, ?)
+                """, (pid, instance, user_id))
+            logger.info(f"Successfully luser for {pid}.")
+        except Exception as e:
+            logger.error(f"Error saving lusesr for {pid}: {e}") 

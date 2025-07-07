@@ -71,6 +71,29 @@ class DatabaseManager:
                     favourites TEXT
                 )
             """)
+            
+            self.connection.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    pid TEXT PRIMARY KEY,
+                    instance_name TEXT,
+                    id TEXT
+                )
+            """)
+            
+            self.connection.execute("""
+                CREATE TABLE IF NOT EXISTS followings (
+                    pid TEXT PRIMARY KEY,
+                    following TEXT
+                )
+            """)
+            
+            self.connection.execute("""
+                CREATE TABLE IF NOT EXISTS lusers (
+                    pid TEXT PRIMARY KEY,
+                    instance_name TEXT,
+                    id TEXT
+                )
+            """)
 
     def check_status(self):
         cursor = self.connection.cursor()
@@ -95,6 +118,20 @@ class DatabaseManager:
 
         self.connection.execute("""
             UPDATE livefeeds
+            SET status = 'pending'
+            WHERE status IS NULL OR status = '';
+        """)
+        
+        cursor.execute("PRAGMA table_info(users);")
+        columns = cursor.fetchall()
+        
+        if not any(column[1] == 'status' for column in columns):
+            self.connection.execute("""
+                ALTER TABLE users ADD COLUMN status TEXT;
+            """)
+            
+        self.connection.execute("""
+            UPDATE users
             SET status = 'pending'
             WHERE status IS NULL OR status = '';
         """)
